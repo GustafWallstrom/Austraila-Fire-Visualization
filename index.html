@@ -1,0 +1,83 @@
+<html>
+
+<head>
+    <title>Coronavirus COVID-19 Visualization</title>
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+        integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+        crossorigin=""></script>
+    <link rel="stylesheet" href="libs/css/index.css" />
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" />
+    <script type="text/javascript" src="libs/d3/d3.min.js"></script>
+    <script type=text/javascript src="libs/jquery/jquery.min.js"></script>
+    <script type=text/javascript src=libs/bootstrap/js/bootstrap.min.js> </script> <script src="libs/leaflet-heat.js">
+    </script>
+</head>
+
+<body class="container-fluid">
+    <div class="card text-center">
+        <div class="card-header">
+            <h2>Coronavirus COVID-19 Global Cases - TNM048 2020</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12" id="totalConfirmed">
+                            <br>
+                            <h5><strong>Total Confirmed</strong></h5>
+                            <hr>
+                            <p><span id="totalNumber">Siffra</span></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12" id="color-info">
+                            <br>
+                            <h6><strong>Confirmed Cases by Country/Region</strong></h5>
+                                <hr>
+                                List with countries and no of confirmed cases
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div id="slider"></div>
+                    <div id="map"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6" id="totalDeaths">
+                            <br>
+                            <h5><strong>Total deaths</strong></h5>
+                            <hr>
+                            <p><span id="date">siffra</span></p>
+                            <p><span id="date">siffra</span></p>
+                            <p><span id="date">siffra</span></p>
+                            <p><span id="date">siffra</span></p>
+                        </div>
+                        <div class="col-md-6" id="totalRecovered">
+                            <br>
+                            <h5><strong>Total recovered</strong></h5>
+                            <hr>
+                            <p><span id="date">siffra</span></p>
+                            <p><span id="date">siffra</span></p>
+                            <p><span id="date">siffra</span></p>
+                            <p><span id="date">siffra</span></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12" id="color-info">
+                            <br>
+                            stats?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type=text/javascript src=map.js> </script>
+    <script type=text/javascript src=slider.js> </script>
+</body>
+
+</html>
