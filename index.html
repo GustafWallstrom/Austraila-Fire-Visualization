@@ -6,8 +6,9 @@
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
         integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
         crossorigin=""></script>
-    <link rel="stylesheet" href="libs/css/index.css" />
+
     <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="libs/css/index.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" />
     <script type="text/javascript" src="libs/d3/d3.min.js"></script>
     <script type=text/javascript src="libs/jquery/jquery.min.js"></script>
@@ -17,7 +18,7 @@
 
 <body class="container-fluid">
     <div class="card text-center">
-        <div class="card-header">
+        <div class="card-header" style="background-color: #222222; margin: 5;">
             <h2>Coronavirus COVID-19 Global Cases - TNM048 2020</h2>
         </div>
         <div class="card-body">
@@ -42,8 +43,13 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div id="slider"></div>
-                    <div id="map"></div>
+                    <div class="row">
+                        <div id="slider"></div>
+                        <div id="map"></div>
+                        <a id="confirmed" class="btn btn-primary">Confirmed</a>
+                        <a id="deaths" class="btn btn-primary">Deaths</a>
+                        <a id="recovered" class="btn btn-primary">Recovered</a>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <div class="row">

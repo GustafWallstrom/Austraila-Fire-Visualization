@@ -17,34 +17,125 @@ var map = L.map('map').setView([20, 60], 2);
 
 // load a tile layer
 L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 4,
-    minZoom: 2
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-$.getJSON("data/confirmed.geojson", function (data) {
-    var locations = data.features.map((rat) => {
-        // the heatmap plugin wants an array of each location
-        var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties['2/20/20'];
-        location.push(number / 7000);
-        return location; // e.g. [50.5, 30.5, 0.2], // lat, lng, intensity
-    });
-    // minOpacity - the minimum opacity the heat will start at
-    // maxZoom - zoom level where the points reach maximum intensity (as intensity scales with zoom), equals maxZoom of the map by default
-    // max - maximum point intensity, 1.0 by default
-    // radius - radius of each "point" of the heatmap, 25 by default
-    // blur - amount of blur, 15 by default
-    // gradient - color gradient config, e.g. {0.4: 'blue', 0.65: 'lime', 1: 'red'}
-    var heat = L.heatLayer(locations, {
-        radius: 10,
-        minOpacity: 1,
-        maxZoom: 4,
-        blur: 1,
-        gradient: {
-            0.1: 'white',
-            0.5: 'red'
-        }
-
-    });
-    map.addLayer(heat);
+map.on('zoomend', function () {
+    var zoomlevel = map.getZoom();
+    console.log("Current Zoom Level =" + zoomlevel)
 });
+
+function getHighestValue(array) {
+    if (!array.length) return null;
+    return Math.max(...array.map(o => o[2]));
+}
+
+function getLowestValue(array) {
+    if (!array.length) return null;
+    return Math.min(...array.map(o => o[2]));
+}
+
+function createLayerStyle(customRadius) {
+    if (customRadius == 0) {
+        return {
+            color: 'Green',
+            radius: 0,
+            stroke: false,
+            fillOpacity: 1
+        }
+    } else {
+        return {
+            color: 'Red',
+            radius: 2 * Math.log(customRadius + 5),
+            stroke: false,
+            fillOpacity: 1
+        }
+    }
+}
+
+function createCircles(feature, latlng) {
+    var myLayerStyle = createLayerStyle(latlng.alt);
+    var result = L.circleMarker(latlng, myLayerStyle);
+    result.on('mouseover', function (e) {
+        var place = '';
+        if (feature.properties['Province/State'].length == 0) {
+            place = feature.properties['Country/Region'];
+        } else {
+            place = feature.properties['Province/State'];
+        }
+        L.popup()
+            .setLatLng(latlng)
+            .setContent('Confirmed infected: ' + e.target._latlng.alt + '</br> Location: ' + place)
+            .openOn(map);
+    });
+    return result;
+}
+let myLayerOptions = {
+    pointToLayer: createCircles,
+    coordsToLatLng: function (coords) {
+        return new L.LatLng(coords[0], coords[1], coords[2]);
+    }
+}
+
+function updateMapLayers() {
+    map.eachLayer(function (layer) {
+        map.removeLayer(layer);
+    });
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 4,
+        minZoom: 2
+    }).addTo(map);
+}
+
+var number = 0;
+$('#confirmed').click(function () {
+    state = 1;
+    updateMapLayers();
+    $.getJSON("data/confirmed.geojson", (data) => {
+        data.features.map((rat) => {
+            var location = rat.geometry.coordinates.reverse();
+            number = rat.properties['2/20/20'];
+            location.push(number);
+            return location;
+        });
+        L.geoJSON(data, myLayerOptions).addTo(map)
+    });
+});
+$('#deaths').click(function () {
+    state = 2;
+    updateMapLayers();
+    $.getJSON("data/deaths.geojson", (data) => {
+        data.features.map((rat) => {
+            var location = rat.geometry.coordinates.reverse();
+            number = rat.properties['2/20/20'];
+            location.push(number);
+            return location;
+        });
+        L.geoJSON(data, myLayerOptions).addTo(map)
+    });
+});
+$('#recovered').click(function () {
+    state = 3;
+    updateMapLayers();
+    $.getJSON("data/recovered.geojson", (data) => {
+        data.features.map((rat) => {
+            var location = rat.geometry.coordinates.reverse();
+            number = rat.properties['2/20/20'];
+            location.push(number);
+            return location;
+        });
+        L.geoJSON(data, myLayerOptions).addTo(map)
+    });
+});
+
+// var heat = L.heatLayer(locations, {
+//     radius: 5,
+//     minOpacity: 1,
+//     maxZoom: 4,
+//     blur: 10,
+//     gradient: {
+//         0.1: 'white',
+//         0.5: 'red'
+//     }
+// });
+// map.addLayer(heat);
