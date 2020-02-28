@@ -7,8 +7,26 @@ var margin = {
     width = 960 - margin.left - margin.right,
     height = 50 - margin.top - margin.bottom;
 
-///////////////////////////////////////
-////////////// SLIDER//////////////////
+$.getJSON("data/confirmed.geojson", (data) => {
+
+    console.log(data.features);
+
+    data.features['properties'].map((rat) => {
+        console.log(rat);
+    });
+
+    data.features.map((rat) => {
+
+        for (let index = 0; index < rat.properties.length; index++) {
+            const element = rat.properties[index];
+            console.log(element);
+
+        }
+
+        return location;
+    });
+
+});
 
 var svgSlider = d3.select("#slider")
     .append("svg")

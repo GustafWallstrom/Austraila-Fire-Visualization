@@ -45,7 +45,7 @@ g {
 }
 
 #totalConfirmed {
-  height: 150px;
+  height: 200px;
   background-color: #222222;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -55,10 +55,16 @@ g {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
   pointer-events: none;
   opacity: 0.8;
+}
+
+#totalNoConfirmed{
+  color: red;
+  font: bold;
+  font-size: 3em;
 }
 
 #totalDeaths {
-  height: 270px;
+  height: 200px;
   background-color: #222222;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -70,8 +76,14 @@ g {
   opacity: 0.8;
 }
 
+#totalNoDeaths{
+  color: red;
+  font: bold;
+  font-size: 3em;
+}
+
 #totalRecovered {
-  height: 270px;
+  height: 200px;
   background-color: #222222;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -81,6 +93,12 @@ g {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
   pointer-events: none;
   opacity: 0.8;
+}
+
+#totalNoRecovered{
+  color: green;
+  font: bold;
+  font-size: 3em;
 }
 
 #color-info {
