@@ -4,12 +4,12 @@
     <title>Coronavirus COVID-19 Visualization</title>
 
     <style>
-        canvas{
+        canvas {
             -moz-user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
         }
-        </style>
+    </style>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
         integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
         crossorigin=""></script>
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="libs/css/index.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" />
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <!-- <script type="text/javascript" src="libs/d3/d3.min.js"></script> -->
     <script type=text/javascript src="libs/jquery/jquery.min.js"></script>
     <script type=text/javascript src=libs/bootstrap/js/bootstrap.min.js> </script> <script src="libs/leaflet-heat.js">
@@ -36,8 +36,7 @@
                     <div class="row">
                         <div class="col-md-12" id="totalConfirmed">
                             <br>
-                            <h5><strong>Total Confirmed cases to this date</strong></h5>
-                            <hr>
+                            <h5><strong>Total Confirmed</strong></h5>
                             <p><span id="totalNoConfirmed"></span></p>
                         </div>
                     </div>
@@ -45,8 +44,7 @@
                         <div class="col-12" id="color-info">
                             <br>
                             <h6><strong>Confirmed Cases by Country/Region</strong></h5>
-                                <hr>
-                                List with countries and no of confirmed cases
+                            <div id="caseContainer" ></div>
 
                         </div>
                     </div>
@@ -54,33 +52,33 @@
                 <div class="col-md-6">
                     <div class="row">
 
-                        <input type="range" min="1579665600000" max="1582171200000" id="date" value="1582171200000"
+                        <input id="date" type="range" min="1579665600000" max="1582171200000" value="1582171200000"
                             step="86400000">
                         <div id="date-value"></div>
                         <div id="map"></div>
-                        <a id="confirmed" class="btn btn-primary">Confirmed</a>
-                        <a id="deaths" class="btn btn-primary">Deaths</a>
-                        <a id="recovered" class="btn btn-primary">Recovered</a>
+                        <div id="buttonContainer">
+                            <a id="confirmed" class="btn btn-primary">Confirmed</a>
+                            <a id="deaths" class="btn btn-primary">Deaths</a>
+                            <a id="recovered" class="btn btn-primary">Recovered</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="row">
                         <div class="col-md-6" id="totalDeaths">
                             <br>
-                            <h5><strong>Total deaths to this date</strong></h5>
-                            <hr>
+                            <h5><strong>Total deaths</strong></h5>
                             <p><span id="totalNoDeaths"></span></p>
                         </div>
                         <div class="col-md-6" id="totalRecovered">
                             <br>
-                            <h5><strong>Total recovered to this date</strong></h5>
-                            <hr>
+                            <h5><strong>Total recovered</strong></h5>
                             <p><span id="totalNoRecovered"></span></p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12" id="graph">
-                            <canvas id="line-chart" width="800" height="450"></canvas>
+                            <canvas id="line-chart" width="800" height="700"></canvas>
                         </div>
                     </div>
                 </div>
@@ -88,6 +86,7 @@
         </div>
     </div>
     <script type=text/javascript src=map.js> </script>
+
     <script type=text/javascript src=stats-containers.js> </script>
 
 </body>

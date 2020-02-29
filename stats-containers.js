@@ -1,45 +1,36 @@
-$.getJSON("data/confirmed.geojson", (data) => {
+$.getJSON('data/confirmed.geojson', (data) => {
+	var sum = null;
 
-    var sum = null;
+	data.features.map((rat) => {
+		var number = rat.properties[datum];
+		sum += number;
+	});
 
-    data.features.map((rat) => {
-        var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties[datum];
-        sum += number;
-    });
-
-    document.getElementById('totalNoConfirmed').innerHTML = sum;
-
+	document.getElementById('totalNoConfirmed').innerHTML = sum;
 });
 
 // Get value for total deaths
 
-$.getJSON("data/deaths.geojson", (data) => {
+$.getJSON('data/deaths.geojson', (data) => {
+	var sum = null;
 
-    var sum = null;
+	data.features.map((rat) => {
+		var number = rat.properties[datum];
+		sum += number;
+	});
 
-    data.features.map((rat) => {
-        var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties[datum];
-        sum += number;
-    });
-
-    document.getElementById('totalNoDeaths').innerHTML = sum;
-
+	document.getElementById('totalNoDeaths').innerHTML = sum;
 });
 
 // Get value for total recovered
 
-$.getJSON("data/recovered.geojson", (data) => {
+$.getJSON('data/recovered.geojson', (data) => {
+	var sum = null;
 
-    var sum = null;
+	data.features.map((rat) => {
+		var number = rat.properties[datum];
+		sum += number;
+	});
 
-    data.features.map((rat) => {
-        var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties[datum];
-        sum += number;
-    });
-
-    document.getElementById('totalNoRecovered').innerHTML = sum;
-
+	document.getElementById('totalNoRecovered').innerHTML = sum;
 });

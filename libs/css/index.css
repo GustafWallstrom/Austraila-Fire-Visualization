@@ -1,197 +1,241 @@
 body {
-  background-color: black;
-  margin: 5;
+	background-color: black;
+	margin: 5;
 }
 
 g {
-  opacity: 0.5;
+	opacity: 0.5;
 }
 
 .card {
-  background-color: black;
-  margin: 5;
+	background-color: black;
+	margin: 5;
 }
 
 .card-body {
-  background-color: black;
+	background-color: black;
 }
 
 .container-fluid {
-  padding: 0;
-  color: white;
+	padding: 0;
+	color: white;
 }
 
 .card-header {
-  background-color: black;
-  padding: 10px;
+	background-color: black;
+	padding: 10px;
 }
 
-
 .zoom {
-  cursor: move;
-  fill: none;
-  pointer-events: all;
+	cursor: move;
+	fill: none;
+	pointer-events: all;
 }
 
 .no-mouse {
-  pointer-events: none;
+	pointer-events: none;
 }
 
 #map {
-  height: 300px;
-  width: auto;
-  position: relative;
-  margin: 5;
+	height: 300px;
+	width: auto;
+	position: relative;
+	margin: 5;
+	text-align: center;
 }
 
 #totalConfirmed {
-  height: 200px;
-  background-color: #222222;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-  opacity: 0.8;
+	height: 200px;
+	background-color: #222222;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+	opacity: 0.8;
 }
 
 #totalNoConfirmed {
-  color: red;
-  font: bold;
-  font-size: 3em;
+	color: khaki;
+	font: bold;
+	font-size: 4em;
 }
 
 #totalDeaths {
-  height: 200px;
-  background-color: #222222;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-  opacity: 0.8;
+	height: 200px;
+	background-color: #222222;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+	opacity: 0.8;
 }
 
 #totalNoDeaths {
-  color: red;
-  font: bold;
-  font-size: 3em;
+	color: #d10000;
+	font: bold;
+	font-size: 3em;
 }
 
 #totalRecovered {
-  height: 200px;
-  background-color: #222222;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-  opacity: 0.8;
+	height: 200px;
+	background-color: #222222;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+	opacity: 0.8;
 }
 
 #totalNoRecovered {
-  color: green;
-  font: bold;
-  font-size: 3em;
+	color: green;
+	font: bold;
+	font-size: 3em;
 }
 
 #color-info {
-  height: 270px;
-  background-color: #222222;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-  opacity: 0.8;
+	height: 450px;
+	background-color: #222222;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+	opacity: 0.8;
 }
 
-
 #tooltip p {
-  margin: 0;
-  font-family: sans-serif;
-  font-size: 14px;
-  line-height: 30px;
+	margin: 0;
+	font-family: sans-serif;
+	font-size: 14px;
+	line-height: 30px;
 }
 
 #tooltip,
 #color-info {
-  margin-top: 20px;
-  position: relative;
-  width: auto;
+	margin-top: 20px;
+	position: relative;
+	width: auto;
 }
 
 #color-info {
-  font-family: sans-serif;
-  font-size: 14px;
-  line-height: 30px;
+	font-family: sans-serif;
+	font-size: 14px;
+	line-height: 30px;
+	height: 50vh;
+	/* As a percentage of the parent. */
+	/* height: 300px;				/* This causes the scroll bar to appear, but can't be used because the height must adjust to the size of the screen. */
+	display: flex;
+	flex-direction: column;
 }
 
 #map {
-  height: 70%;
+	height: 70%;
 }
 
 #date {
-  margin-left: auto;
-  margin-right: auto;
-  width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
 }
 
 .leaflet-heatmap-layer {
-  opacity: 0.5;
+	opacity: 0.5;
 }
 
 #sum-div {
-  position: absolute;
-  font-size: 16px;
-  left: 15px;
-  z-index: 1000000;
+	position: absolute;
+	font-size: 16px;
+	left: 15px;
+	z-index: 1000000;
 }
 
 #date-value {
-  margin-top: 10px;
-  width: 100%;
-  text-align: center;
+	margin-top: 10px;
+	width: 100%;
+	text-align: center;
 }
 
 #sum-div {
-  top: 485px;
+	top: 485px;
 }
-
+#caseContainer {
+	overflow-y: auto;
+}
+#caseContainer ul {
+	white-space: nowrap;
+}
+.caseItem {
+	list-style-type: none;
+	height: 30px;
+	text-align: left;
+	font-size: 1.2em;
+}
 input[type=range] {
-  -webkit-appearance: none;
+	-webkit-appearance: none;
 }
 
 input[type=range]::-webkit-slider-runnable-track {
-  width: 300px;
-  height: 5px;
-  background: rgba(221, 221, 221, 0.37);
-  border: none;
-  border-radius: 3px;
+	width: 300px;
+	height: 5px;
+	background: rgba(221, 221, 221, 0.37);
+	border: none;
+	border-radius: 3px;
 }
 
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  border: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: red;
-  margin-top: -4px;
+	-webkit-appearance: none;
+	border: none;
+	height: 16px;
+	width: 16px;
+	border-radius: 50%;
+	background: var(--slider-color);
+	margin-top: -4px;
 }
 
 input[type=range]:focus {
-  outline: none;
+	outline: none;
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #ddd;
+	background: #ddd;
+}
+
+:root {
+	--button-color: #222222;
+	--text-color: white;
+	--slider-color: khaki;
+}
+
+.btn,
+.btn-primary {
+	background-color: var(--button-color);
+	color: var(--text-color) !important;
+	border-color: black;
+}
+
+.btn:hover {
+	background-color: grey;
+	color: black;
+	border-color: black;
+}
+
+.btn:active {
+	background-color: grey !important;
+	border-color: white !important;
+}
+
+#buttonContainer {
+	text-align: center;
+	width: 100%;
 }
