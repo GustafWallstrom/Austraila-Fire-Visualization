@@ -173,7 +173,7 @@ input[type=range] {
 input[type=range]::-webkit-slider-runnable-track {
   width: 300px;
   height: 5px;
-  background: #ddd;
+  background: rgba(221, 221, 221, 0.37);
   border: none;
   border-radius: 3px;
 }
@@ -184,7 +184,7 @@ input[type=range]::-webkit-slider-thumb {
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: #ff9800;
+  background: red;
   margin-top: -4px;
 }
 

@@ -1,12 +1,10 @@
-// Get value for total confirmed
-
 $.getJSON("data/confirmed.geojson", (data) => {
 
     var sum = null;
 
     data.features.map((rat) => {
         var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties['2/20/20'];
+        var number = rat.properties[datum];
         sum += number;
     });
 
@@ -22,7 +20,7 @@ $.getJSON("data/deaths.geojson", (data) => {
 
     data.features.map((rat) => {
         var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties['2/20/20'];
+        var number = rat.properties[datum];
         sum += number;
     });
 
@@ -38,7 +36,7 @@ $.getJSON("data/recovered.geojson", (data) => {
 
     data.features.map((rat) => {
         var location = rat.geometry.coordinates.reverse();
-        var number = rat.properties['2/20/20'];
+        var number = rat.properties[datum];
         sum += number;
     });
 
