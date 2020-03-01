@@ -1,3 +1,4 @@
+/* MAIN */
 body {
 	background-color: black;
 	margin: 5;
@@ -9,15 +10,17 @@ g {
 
 .card {
 	background-color: black;
-	margin: 5;
+	height: 100vh;
 }
 
 .card-body {
 	background-color: black;
+	padding-top: 3;
 }
 
 .container-fluid {
 	padding: 0;
+	margin: 0;
 	color: white;
 }
 
@@ -36,16 +39,11 @@ g {
 	pointer-events: none;
 }
 
-#map {
-	height: 300px;
-	width: auto;
-	position: relative;
-	margin: 5;
-	text-align: center;
-}
+/* LEFT COLUMN */
 
 #totalConfirmed {
-	height: 200px;
+	height: 150px;
+	padding-top: 10;
 	background-color: #222222;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
@@ -56,82 +54,6 @@ g {
 	pointer-events: none;
 	opacity: 0.8;
 }
-
-#totalDeaths {
-	height: 200px;
-	background-color: #222222;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	pointer-events: none;
-	opacity: 0.8;
-}
-
-#totalNoDeaths {
-	color: #d10000;
-	font: bold;
-	font-size: 3em;
-}
-
-#totalRecovered {
-	height: 200px;
-	background-color: #222222;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	pointer-events: none;
-	opacity: 0.8;
-}
-
-#totalNoRecovered {
-	color: green;
-	font: bold;
-	font-size: 3em;
-}
-
-#tooltip p {
-	margin: 0;
-	font-family: sans-serif;
-	font-size: 14px;
-	line-height: 30px;
-}
-
-#map {
-	height: 70%;
-}
-
-#date {
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;
-}
-
-.leaflet-heatmap-layer {
-	opacity: 0.5;
-}
-
-#sum-div {
-	position: absolute;
-	font-size: 16px;
-	left: 15px;
-}
-
-#date-value {
-	margin-top: 10px;
-	width: 100%;
-	text-align: center;
-}
-
-#sum-div {
-	top: 485px;
-}
-/* LEFT COLUMN */
 #totalNoConfirmed {
 	color: khaki;
 	font: bold;
@@ -142,48 +64,86 @@ g {
 	opacity: 0.8;
 	display: flex;
 	flex-direction: column;
-	height: 50vh;
+	height: 70vh;
 	line-height: 30px;
 	margin-top: 5px;
+	padding-top: 10;
 }
-#caseContainer {
+#confirmedCaseContainer,
+#deathsCaseContainer,
+#recoveredCaseContainer {
 	overflow-y: auto;
 	margin-bottom: 30px;
+	border-style: groove;
+	border-color: lightgrey;
+	border-width: 0px 0px 1px 0px;
 }
-#caseContainer ul {
+#confirmedCaseContainer ul,
+#deathsCaseContainer ul,
+#recoveredCaseContainer ul {
 	white-space: nowrap;
 	padding: 0;
+	margin: 0;
 }
-.caseItem {
+
+.confirmedCaseItem,
+.deathsCaseItem,
+.recoveredCaseItem {
 	list-style-type: none;
 	text-align: left;
 	font-size: 1.2em;
 	cursor: pointer;
+	position: relative;
 	padding: 2px 0 2px 2px;
 	border-style: groove;
 	border-color: lightgrey;
 	border-width: 1px 1px 0px 0px;
 }
-
-/* width */
-::-webkit-scrollbar {
-	width: 10px;
+.confirmedCaseItem:after,
+.deathsCaseItem:after,
+.recoveredCaseItem:after {
+	content: '\A';
+	position: absolute;
+	background: var(--percentage-color);
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: var(--percentage-confirmed);
+	opacity: 0.2;
+}
+#confirmedList {
+	color: khaki;
+	font-weight: bold;
+}
+#deathsList {
+	color: red;
+	font-weight: bold;
+}
+#recoveredList {
+	color: green;
+	font-weight: bold;
+}
+/* MIDDLE COLUMN */
+#map {
+	height: 75vh;
+	width: auto;
+	position: relative;
+	margin: 5;
+	text-align: center;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-	background: #f1f1f1;
+#dateSlider {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10;
+	width: 90%;
+}
+#date-value {
+	width: 100%;
+	text-align: center;
+	margin-bottom: 5px;
 }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-	background: #888;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-	background: #555;
-}
 input[type=range] {
 	-webkit-appearance: none;
 }
@@ -213,13 +173,6 @@ input[type=range]:focus {
 input[type=range]:focus::-webkit-slider-runnable-track {
 	background: #ddd;
 }
-
-:root {
-	--button-color: #222222;
-	--text-color: white;
-	--slider-color: khaki;
-}
-
 .btn,
 .btn-primary {
 	background-color: var(--button-color);
@@ -239,6 +192,72 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 }
 
 #buttonContainer {
+	position: absolute;
+	bottom: 8vh;
 	text-align: center;
 	width: 100%;
+	padding-top: 1vh;
+	height: 6vh;
+
+	z-index: 10000;
+}
+:root {
+	--button-color: #222222;
+	--text-color: white;
+	--slider-color: khaki;
+}
+/* RIGHT COLUMN */
+#totalDeaths {
+	background-color: #222222;
+	padding-top: 10;
+	opacity: 0.8;
+	display: flex;
+	flex-direction: column;
+	height: 35vh;
+	line-height: 30px;
+	margin-top: 5px;
+}
+
+#totalNoDeaths {
+	color: #d10000;
+	font: bold;
+	font-size: 3em;
+}
+
+#totalRecovered {
+	background-color: #222222;
+	padding-top: 10;
+	opacity: 0.8;
+	display: flex;
+	flex-direction: column;
+	height: 35vh;
+	line-height: 30px;
+	margin-top: 5px;
+}
+
+#totalNoRecovered {
+	color: green;
+	font: bold;
+	font-size: 3em;
+}
+
+/* MISC * / 
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }

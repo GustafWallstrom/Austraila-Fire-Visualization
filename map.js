@@ -2,6 +2,7 @@
  * COVID-19 Visualization for the course TNM048
  * Author: Samuel Svensson and Gustaf Wallström
  */
+
 var margin = {
 		top: 20,
 		right: 50,
@@ -10,19 +11,28 @@ var margin = {
 	},
 	width = 960 - margin.left - margin.right,
 	height = 600 - margin.top - margin.bottom;
+var startDate = '2020/01/22';
+var endDate = '2020/20/02';
 var number = 0;
-var myGeoJsonRoute;
-var start = new Date('2020/01/22').getTime();
-var end = new Date('2020/20/02').getTime();
+var start = new Date(startDate).getTime();
+var end = new Date().getTime();
 var step = 86400000;
-var datum = '2/20/20';
+
 var state = 'confirmed';
+var coordinatesArray = [];
+var conData = [];
+const log = console.log;
 // Initialize map
 var svgPlot = d3.select('#map').append('svg').attr('width', width + margin.left + margin.right).attr('height', height);
 var basemap = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
 	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 });
-
+let myLayerOptions = {
+	pointToLayer: createCircles,
+	coordsToLatLng: (coords) => {
+		return new L.LatLng(coords[0], coords[1], coords[2]);
+	}
+};
 var map = L.map('map', {
 	center: [ 20, 60 ],
 	zoom: 2,
@@ -30,10 +40,12 @@ var map = L.map('map', {
 });
 var svg = d3.select(map.getPanes().overlayPane).append('svg');
 var g = svg.append('g').attr('class', 'leaflet-zoom-hide');
+
 /* ------------------      DATA RETRIEVAL       ----------------------- */
 /**
  * Load all data
  */
+var amountOfDays = 0;
 $.when(
 	$.getJSON('data/confirmed.geojson'),
 	$.getJSON('data/deaths.geojson'),
@@ -42,7 +54,6 @@ $.when(
 	processData(confirmedData[0]);
 	processData(deathsData[0]);
 	processData(recoveredData[0]);
-
 	// Load confirmed data at start
 	drawMapLayers(confirmedData[0]);
 
@@ -58,71 +69,137 @@ $.when(
 		state = 'recovered';
 		drawMapLayers(recoveredData[0]);
 	});
+	amountOfDays = getTotalDays(confirmedData[0].features);
+	coordinatesArray = getCoordinatesArray(confirmedData[0].features);
+	conData = confirmedData[0].features;
+	getList(confirmedData[0], 'confirmed');
+	getList(deathsData[0], 'deaths');
+	getList(recoveredData[0], 'recovered');
+	helper.updateConfirmedTotal(confirmedData[0]);
+	helper.updateDeathsTotal(deathsData[0]);
+	helper.updateRecoveredTotal(recoveredData[0]);
 
-	getList(confirmedData[0]);
 	/* ------------------      Graph      ----------------------- */
 	/**
- * Graph which shows data over time
- */
+ 	* Graph which shows data over time
+ 	*/
 
 	var dateArray = [];
+	var datePredictArray = [];
 	var confirmedArray = [];
 	var deathArray = [];
 	var recoveredArray = [];
-	for (let index = 0; index < 30; index++) {
+
+	for (let index = 0; index < amountOfDays + 5; index++) {
 		const tempDate = new Date(parseInt(start + index * step));
-		dateArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
+		if (index < 30) dateArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
+		datePredictArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
 	}
 
 	for (let index = 0; index < dateArray.length; index++) {
-		var confirmedSum = 0;
-		var deathSum = 0;
-		var recoveredSum = 0;
+		confirmedArray[index] = getTotalSum(confirmedData[0].features, dateArray[index]);
+		deathArray[index] = getTotalSum(deathsData[0].features, dateArray[index]);
+		recoveredArray[index] = getTotalSum(recoveredData[0].features, dateArray[index]);
+	}
+	/* ------------------      PREDICTION      ----------------------- */
+	/**
+ 	* Calculate a prediction for the number of infected persons.
+	 */
 
-		confirmedData[0].features.map((rat) => {
-			var number = rat.properties[dateArray[index]];
-			confirmedSum += number;
-			return confirmedSum;
-		});
-		confirmedArray[index] = confirmedSum;
+	var confirmedDaysArray = [];
 
-		deathsData[0].features.map((rat) => {
-			var number = rat.properties[dateArray[index]];
-			deathSum += number;
-			return deathSum;
-		});
-		deathArray[index] = deathSum;
-
-		recoveredData[0].features.map((rat) => {
-			var number = rat.properties[dateArray[index]];
-			recoveredSum += number;
-			return recoveredSum;
-		});
-		recoveredArray[index] = recoveredSum;
+	for (let index = 0; index < amountOfDays; index++) {
+		confirmedDaysArray[index] = [ index, confirmedArray[index] ];
 	}
 
-	new Chart(document.getElementById('line-chart'), {
+	var predictArray = regression.linear(confirmedDaysArray);
+	var predictExp = regression.exponential(confirmedDaysArray);
+	var newPredictArray = [];
+	var newPredictExp = [];
+	predictArray.points.map((item) => {
+		newPredictArray[item[0]] = item[1];
+	});
+
+	predictExp.points.map((item) => {
+		newPredictExp[item[0]] = item[1];
+	});
+
+	for (let index = 0; index < amountOfDays + 5; index++) {
+		if (index >= amountOfDays - 5) {
+			newPredictArray[index] = 3050.79 * index + -11510.12;
+			newPredictExp[index] = 5734.49 * Math.exp(0.1 * index);
+		} else {
+			newPredictArray.splice(0, 10);
+			newPredictExp.splice(0, 10);
+		}
+	}
+
+	/* ------------------      Graph  2     ----------------------- */
+	/**
+ 	* Graph which shows data over time
+	 */
+	// Legend click handler
+	var defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+	var newLegendClickHandler = function(e, legendItem) {
+		var index = legendItem.datasetIndex;
+		if (index > 4) {
+			// Do the original logic
+			defaultLegendClickHandler(e, legendItem);
+		} else {
+			let ci = this.chart;
+			if (ci.getDatasetMeta(legendItem.datasetIndex).hidden === null) {
+				ci.getDatasetMeta(legendItem.datasetIndex).hidden = !ci.data.datasets[index].hidden;
+			} else if (ci.getDatasetMeta(legendItem.datasetIndex).hidden === false) {
+				ci.getDatasetMeta(legendItem.datasetIndex).hidden = true;
+			} else {
+				ci.getDatasetMeta(legendItem.datasetIndex).hidden = false;
+			}
+			ci.update();
+		}
+	};
+	var chartType = 'linear';
+	// Margin between legend and chart
+	Chart.Legend.prototype.afterFit = function() {
+		this.height = this.height + 20;
+	};
+	var ctx = document.getElementById('line-chart');
+	var config = {
 		type: 'line',
 		data: {
-			labels: dateArray,
+			labels: datePredictArray,
 			datasets: [
 				{
 					data: confirmedArray,
 					label: 'Confirmed',
 					borderColor: 'khaki',
-					fill: false
+					pointBackgroundColor: 'khaki',
+					yAxisID: 'first-y-axis'
 				},
 				{
 					data: deathArray,
 					label: 'Deaths',
 					borderColor: '#d10000',
-					fill: start
+					pointBackgroundColor: '#d10000'
 				},
 				{
 					data: recoveredArray,
 					label: 'Recovered',
 					borderColor: 'green',
-					fill: false
+					pointBackgroundColor: 'green'
+				},
+				{
+					data: newPredictArray,
+					label: 'Linear Prediction',
+					borderColor: 'darkviolet',
+					pointBackgroundColor: 'darkviolet',
+					borderDash: [ 3 ]
+				},
+				{
+					data: newPredictExp,
+					label: 'Exp. Prediction',
+					borderColor: 'hotpink',
+					pointBackgroundColor: 'hotpink',
+					borderDash: [ 3 ]
 				}
 			]
 		},
@@ -130,18 +207,90 @@ $.when(
 			title: {
 				display: true,
 				text: 'Graph of confirmed cases over time.'
+			},
+			scales: {
+				xAxes: [
+					{
+						ticks: {
+							autoSkip: true,
+							maxTicksLimit: 20.1
+						},
+						gridLines: {
+							display: true
+						}
+					}
+				],
+				yAxes: [
+					{
+						id: 'first-y-axis',
+						type: chartType
+					}
+				]
+			},
+			layout: {
+				padding: {
+					top: 20
+				}
+			},
+			elements: {
+				line: {
+					tension: 0.5
+				}
+			},
+			legend: {
+				onClick: newLegendClickHandler
 			}
 		}
+	};
+	// Create chart
+	var dataChart = new Chart(ctx, config);
+
+	$('#linear').click(function() {
+		chartType = 'linear';
+		if (dataChart) {
+			dataChart.destroy();
+		}
+		config.options.scales.yAxes[0].type = chartType;
+		config.options.scales.yAxes[0].ticks = {
+			ticks: {
+				min: 0,
+				max: 180000
+			}
+		};
+		dataChart = new Chart(ctx, config);
+	});
+	$('#logarithmic').click(function() {
+		chartType = 'logarithmic';
+		if (dataChart) {
+			dataChart.destroy();
+		}
+		config.options.scales.yAxes[0].type = chartType;
+		config.options.scales.yAxes[0].ticks = {
+			min: 0,
+			max: 1000000,
+			callback: function(value, index, values) {
+				if (value === 1000000) return '1M';
+				if (value === 100000) return '100K';
+				if (value === 10000) return '10K';
+				if (value === 1000) return '1K';
+				if (value === 100) return '100';
+				if (value === 10) return '10';
+				if (value === 0) return '0';
+				return null;
+			}
+		};
+		dataChart = new Chart(ctx, config);
 	});
 });
-function getList(data) {
+function getList(data, name) {
 	var casesList = [];
+	var cleanList = [];
 	var merged = {
 		rows: []
 	};
-	data.features.forEach(function(sourceRow) {
+	data.features.forEach((sourceRow) => {
 		if (
-			!merged.rows.some(function(row) {
+			!merged.rows.some((row) => {
 				return row.key[0] == sourceRow.properties['Country/Region'];
 			})
 		) {
@@ -150,43 +299,52 @@ function getList(data) {
 				value: sourceRow.properties['2/20/20']
 			});
 		} else {
-			var targetRow = merged.rows.filter(function(targetRow) {
+			var targetRow = merged.rows.filter((targetRow) => {
 				return targetRow.key[0] == sourceRow.properties['Country/Region'];
 			});
 			targetRow[0].value += sourceRow.properties['2/20/20'];
 		}
 	});
-	merged.rows.sort(compare).map((rat) => {
-		casesList.push('<span style="color: red; font-weight: bold;">' + rat.value + '</span> ' + rat.key);
+	merged.rows.sort(compare).map((item) => {
+		casesList.push('<span id="' + name + 'List">' + item.value + '</span> ' + item.key);
+	});
+	merged.rows.sort(compare).map((item) => {
+		cleanList.push([ item.key[0], item.value ]);
 	});
 
 	var ul = document.createElement('ul');
-	ul.setAttribute('id', 'caseList');
-
-	document.getElementById('caseContainer').appendChild(ul);
+	ul.setAttribute('id', name + 'CaseList');
+	document.getElementById(name + 'CaseContainer').appendChild(ul);
 	casesList.forEach(renderCasesList);
 
 	function renderCasesList(element, index, arr) {
+		var percentage = getPercentage(cleanList, index);
+		var color = getColor(name);
 		var li = document.createElement('li');
 		li.setAttribute('id', index);
-		li.setAttribute('class', 'caseItem');
+		li.setAttribute('class', name + 'CaseItem');
+		li.style.setProperty('--percentage-color', color);
+		li.style.setProperty('--percentage-confirmed', percentage + '%');
+		li.addEventListener('click', moveMap);
 		li.innerHTML += element;
 		ul.appendChild(li);
 	}
 }
-function handler(event) {
-	var dataValue = event.target.firstChild.nodeValue; // value of TextNode created by elements.createTextNode(Data)
-	// handle dataValue
-	alert(dataValue);
+
+function moveMap(e) {
+	var ele = e.target;
+	var withoutNumbers = ele.innerText.replace(/[0-9]/g, '');
+	coordinates = getCoordinates(conData, withoutNumbers);
+	map.setView(coordinates[0], 3);
 }
 
 /* ------------------      SLIDER FUNCTIONALITY       ----------------------- */
 /**
  * What happens when we use the date slider
  */
-
+var currentDate = '2/20/20';
 d3.select('#date-value').text('Thursday, 20/2/2020');
-d3.select('#date').on('input', function() {
+d3.select('#dateSlider').on('input', function() {
 	var data = new Date(parseInt(this.value));
 	var weekday = new Array(7);
 	weekday[0] = 'Sunday';
@@ -201,28 +359,25 @@ d3.select('#date').on('input', function() {
 	var date = data.getDate();
 	var month = data.getMonth() + 1;
 	d3.select('#date-value').text(day + ', ' + date + '/' + month + '/' + data.getFullYear());
-	datum = month + '/' + date + '/20';
+	currentDate = month + '/' + date + '/20';
+	// Draw new circles
 	$.getJSON('data/' + state + '.geojson', (data) => {
-		data.features.map((rat) => {
-			var location = rat.geometry.coordinates.reverse();
-			number = rat.properties[datum];
+		data.features.map((item) => {
+			var location = item.geometry.coordinates.reverse();
+			number = item.properties[currentDate];
 			location.push(number);
 			return location;
 		});
 		drawMapLayers(data);
 	});
+
+	//helper.updateConfirmedTotal(confirmedData[0]);
 });
 
 /* ------------------      DRAW CIRCLES       ----------------------- */
 /**
  * Render circles on map
  */
-let myLayerOptions = {
-	pointToLayer: createCircles,
-	coordsToLatLng: function(coords) {
-		return new L.LatLng(coords[0], coords[1], coords[2]);
-	}
-};
 
 function createLayerStyle(customRadius) {
 	if (customRadius == 0) {
@@ -241,7 +396,7 @@ function createLayerStyle(customRadius) {
 				deaths.style.setProperty('--button-color', '#222222');
 				confirmed.style.setProperty('--button-color', '#222222');
 				confirmed.style.setProperty('--text-color', 'white');
-				date.style.setProperty('--slider-color', 'green');
+				dateSlider.style.setProperty('--slider-color', 'green');
 				break;
 			}
 			case 'deaths':
@@ -250,7 +405,7 @@ function createLayerStyle(customRadius) {
 				deaths.style.setProperty('--button-color', '#d10000');
 				recovered.style.setProperty('--button-color', '#222222');
 				confirmed.style.setProperty('--text-color', 'white');
-				date.style.setProperty('--slider-color', 'red');
+				dateSlider.style.setProperty('--slider-color', 'red');
 				break;
 			default:
 				circleColor = 'khaki';
@@ -258,7 +413,7 @@ function createLayerStyle(customRadius) {
 				deaths.style.setProperty('--button-color', '#222222');
 				confirmed.style.setProperty('--button-color', 'khaki');
 				confirmed.style.setProperty('--text-color', 'black');
-				date.style.setProperty('--slider-color', 'khaki');
+				dateSlider.style.setProperty('--slider-color', 'khaki');
 				break;
 		}
 		return {
@@ -273,8 +428,9 @@ function createLayerStyle(customRadius) {
 function createCircles(feature, latlng) {
 	var myLayerStyle = createLayerStyle(latlng.alt);
 	var result = L.circleMarker(latlng, myLayerStyle);
+	result.bindPopup('Popup content');
 
-	result.on('mouseover', function(e) {
+	result.on('mouseover', (e) => {
 		var place = '';
 		if (feature.properties['Province/State'].length == 0) {
 			place = feature.properties['Country/Region'];
@@ -283,32 +439,31 @@ function createCircles(feature, latlng) {
 		}
 		L.popup()
 			.setLatLng(latlng)
-			.setContent('Confirmed infected: ' + e.target._latlng.alt + '</br> Location: ' + place)
+			.setContent(capitalizeFLetter(state) + ': ' + e.target._latlng.alt + '</br> Location: ' + place)
 			.openOn(map);
+	});
+	result.on('mouseout', (e) => {
+		map.closePopup();
 	});
 	return result;
 }
 
 /* ------------------      HELPER FUNCTIONS/MISC      ----------------------- */
-function getHighestValue(array) {
-	if (!array.length) return null;
-	return Math.max(...array.map((o) => o[2]));
-}
-
-function getLowestValue(array) {
-	if (!array.length) return null;
-	return Math.min(...array.map((o) => o[2]));
+function capitalizeFLetter(input) {
+	var string = input;
+	string = string[0].toUpperCase() + string.slice(1);
+	return string;
 }
 function processData(data) {
-	data.features.map((rat) => {
-		var location = rat.geometry.coordinates.reverse();
-		number = rat.properties[datum];
+	data.features.map((item) => {
+		var location = item.geometry.coordinates.reverse();
+		number = item.properties[currentDate];
 		location.push(number);
 		return location;
 	});
 }
 function drawMapLayers(data) {
-	map.eachLayer(function(layer) {
+	map.eachLayer((layer) => {
 		if (!layer._url) {
 			map.removeLayer(layer);
 		}
@@ -327,46 +482,56 @@ function compare(a, b) {
 	}
 	return comparison * -1;
 }
-// d3.json("data/confirmed.geojson", function (error, collection) {
-// 	 if (error) throw error;
-// 	 var transform = d3.geo.transform({
-// 		  point: projectPoint
-// 	 });
-// 	 var path = d3.geo.path().projection(transform);
-
-// 	 var feature = g
-// 		  .selectAll("path")
-// 		  .data(collection.features)
-// 		  .enter()
-// 		  .append("path")
-// 		  .attr("d", path)
-// 		  .style("fill", "none")
-// 		  .style("stroke-width", "1.5")
-// 		  .style("stroke", "#ff9800");
-
-// 	 map.on("viewreset", reset);
-// 	 reset();
-
-// 	 // Reposition the SVG to cover the features.
-// 	 function reset() {
-// 		  var bounds = path.bounds(collection),
-// 			   topLeft = bounds[0],
-// 			   bottomRight = bounds[1];
-
-// 		  svg
-// 			   .attr("width", bottomRight[0] - topLeft[0])
-// 			   .attr("height", bottomRight[1] - topLeft[1])
-// 			   .style("left", topLeft[0] + "px")
-// 			   .style("top", topLeft[1] + "px");
-
-// 		  g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-// 		  feature.attr("d", path);
-// 	 }
-
-// 	 // Use Leaflet to implement a D3 geometric transformation.
-// 	 function projectPoint(x, y) {
-// 		  var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-// 		  this.stream.point(point.x, point.y);
-// 	 }
-// });
+function getTotalDays(data) {
+	var totalDays = 0;
+	Object.size = (obj) => {
+		var size = 0,
+			key;
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) size++;
+		}
+		return size;
+	};
+	var size = Object.size(data[0].properties);
+	totalDays = size - 2;
+	return totalDays;
+}
+function getTotalSum(data, index) {
+	var totalSum = 0;
+	data.map((item) => {
+		totalSum += item.properties[index];
+	});
+	return totalSum;
+}
+function getPercentage(data, index) {
+	var percentage = 0.0;
+	const max = 76199;
+	percentage = 80 * data[index][1] / max + 4;
+	return percentage.toFixed(2);
+}
+function getCoordinatesArray(data) {
+	var arr = [];
+	data.map((item) => {
+		arr.push([ item.geometry.coordinates[0], item.geometry.coordinates[1] ]);
+	});
+	return arr;
+}
+function getCoordinates(data, index) {
+	var result = [];
+	data.forEach((key) => {
+		if (key.properties['Country/Region'].trim() === index.trim()) {
+			result.push([ key.geometry.coordinates[0], key.geometry.coordinates[1] ]);
+		}
+	});
+	return result;
+}
+function getColor(state) {
+	switch (state) {
+		case 'recovered':
+			return 'green';
+		case 'deaths':
+			return 'red';
+		default:
+			return 'khaki';
+	}
+}
