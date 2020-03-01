@@ -157,7 +157,7 @@ function getList(data) {
 		}
 	});
 	merged.rows.sort(compare).map((rat) => {
-		casesList.push(rat.value + ' ' + rat.key);
+		casesList.push('<span style="color: red; font-weight: bold;">' + rat.value + '</span> ' + rat.key);
 	});
 
 	var ul = document.createElement('ul');
@@ -168,6 +168,7 @@ function getList(data) {
 
 	function renderCasesList(element, index, arr) {
 		var li = document.createElement('li');
+		li.setAttribute('id', index);
 		li.setAttribute('class', 'caseItem');
 		li.innerHTML += element;
 		ul.appendChild(li);
