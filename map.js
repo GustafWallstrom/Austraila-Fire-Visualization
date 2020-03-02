@@ -12,10 +12,11 @@ var margin = {
 	width = 960 - margin.left - margin.right,
 	height = 600 - margin.top - margin.bottom;
 var startDate = '2020/01/22';
-var endDate = '2020/20/02';
+var endDate = '2020/03/01';
+var currentDate = '3/01/20';
 var number = 0;
 var start = new Date(startDate).getTime();
-var end = new Date().getTime();
+var end = new Date(endDate).getTime();
 var step = 86400000;
 
 var state = 'confirmed';
@@ -90,12 +91,15 @@ $.when(
 	var deathArray = [];
 	var recoveredArray = [];
 
+	// Fill datePredictArray with strings containing all days + 5 for labelling
 	for (let index = 0; index < amountOfDays + 5; index++) {
 		const tempDate = new Date(parseInt(start + index * step));
-		if (index < 30) dateArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
+		if (index < amountOfDays) dateArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
 		datePredictArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
 	}
 
+	// Fill chart arrays with x,y values -> (time, cases)
+	// log(dateArray.length); TOTAL amount of days in datasets
 	for (let index = 0; index < dateArray.length; index++) {
 		confirmedArray[index] = getTotalSum(confirmedData[0].features, dateArray[index]);
 		deathArray[index] = getTotalSum(deathsData[0].features, dateArray[index]);
@@ -106,6 +110,7 @@ $.when(
  	* Calculate a prediction for the number of infected persons.
 	 */
 
+	// Fill new array for calculating regression
 	var confirmedDaysArray = [];
 
 	for (let index = 0; index < amountOfDays; index++) {
@@ -114,21 +119,26 @@ $.when(
 
 	var predictArray = regression.linear(confirmedDaysArray);
 	var predictExp = regression.exponential(confirmedDaysArray);
+
+	// Fill new arrays for easier calculations
 	var newPredictArray = [];
 	var newPredictExp = [];
 	predictArray.points.map((item) => {
 		newPredictArray[item[0]] = item[1];
 	});
-
 	predictExp.points.map((item) => {
 		newPredictExp[item[0]] = item[1];
 	});
 
-	for (let index = 0; index < amountOfDays + 5; index++) {
-		if (index >= amountOfDays - 5) {
-			newPredictArray[index] = 3050.79 * index + -11510.12;
-			newPredictExp[index] = 5734.49 * Math.exp(0.1 * index);
+	var predictionLength = 5;
+	// log(amountOfDays); // -> 40 atm
+	for (let index = 0; index < amountOfDays + predictionLength; index++) {
+		// amountOfDays - predictionLength because we want to show earlier data, not only current date and forward
+		if (index >= amountOfDays - predictionLength) {
+			newPredictArray[index] = 2718.97 * index + -7801.71;
+			newPredictExp[index] = 12499.42 * Math.exp(0.06 * index);
 		} else {
+			// remove 10 first slots in arrays because they cross x-axis
 			newPredictArray.splice(0, 10);
 			newPredictExp.splice(0, 10);
 		}
@@ -138,6 +148,12 @@ $.when(
 	/**
  	* Graph which shows data over time
 	 */
+
+	var chartType = 'linear';
+	// Margin between legend and chart
+	Chart.Legend.prototype.afterFit = function() {
+		this.height = this.height + 20;
+	};
 	// Legend click handler
 	var defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
 	var newLegendClickHandler = function(e, legendItem) {
@@ -157,11 +173,7 @@ $.when(
 			ci.update();
 		}
 	};
-	var chartType = 'linear';
-	// Margin between legend and chart
-	Chart.Legend.prototype.afterFit = function() {
-		this.height = this.height + 20;
-	};
+
 	var ctx = document.getElementById('line-chart');
 	var config = {
 		type: 'line',
@@ -296,13 +308,13 @@ function getList(data, name) {
 		) {
 			merged.rows.push({
 				key: [ sourceRow.properties['Country/Region'] ],
-				value: sourceRow.properties['2/20/20']
+				value: sourceRow.properties[currentDate]
 			});
 		} else {
 			var targetRow = merged.rows.filter((targetRow) => {
 				return targetRow.key[0] == sourceRow.properties['Country/Region'];
 			});
-			targetRow[0].value += sourceRow.properties['2/20/20'];
+			targetRow[0].value += sourceRow.properties[currentDate];
 		}
 	});
 	merged.rows.sort(compare).map((item) => {
@@ -330,7 +342,6 @@ function getList(data, name) {
 		ul.appendChild(li);
 	}
 }
-
 function moveMap(e) {
 	var ele = e.target;
 	var withoutNumbers = ele.innerText.replace(/[0-9]/g, '');
@@ -342,8 +353,8 @@ function moveMap(e) {
 /**
  * What happens when we use the date slider
  */
-var currentDate = '2/20/20';
-d3.select('#date-value').text('Thursday, 20/2/2020');
+
+d3.select('#date-value').text('Sunday, 1/3/2020');
 d3.select('#dateSlider').on('input', function() {
 	var data = new Date(parseInt(this.value));
 	var weekday = new Array(7);
@@ -505,8 +516,8 @@ function getTotalSum(data, index) {
 }
 function getPercentage(data, index) {
 	var percentage = 0.0;
-	const max = 76199;
-	percentage = 80 * data[index][1] / max + 4;
+	const max = 88371;
+	percentage = 90 * data[index][1] / max + 4;
 	return percentage.toFixed(2);
 }
 function getCoordinatesArray(data) {
