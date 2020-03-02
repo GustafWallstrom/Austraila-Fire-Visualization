@@ -370,7 +370,12 @@ d3.select('#dateSlider').on('input', function() {
 	var date = data.getDate();
 	var month = data.getMonth() + 1;
 	d3.select('#date-value').text(day + ', ' + date + '/' + month + '/' + data.getFullYear());
-	currentDate = month + '/' + date + '/20';
+	// Because of leading zero before march's days (from dataset)
+	if (month == 3 && date < 10) {
+		currentDate = month + '/0' + date + '/20';
+	} else {
+		currentDate = month + '/' + date + '/20';
+	}
 	// Draw new circles
 	$.getJSON('data/' + state + '.geojson', (data) => {
 		data.features.map((item) => {
@@ -379,6 +384,7 @@ d3.select('#dateSlider').on('input', function() {
 			location.push(number);
 			return location;
 		});
+		//
 		drawMapLayers(data);
 	});
 
@@ -479,6 +485,8 @@ function drawMapLayers(data) {
 			map.removeLayer(layer);
 		}
 	});
+	log(myLayerOptions);
+	log(data);
 	L.geoJSON(data, myLayerOptions).addTo(map);
 }
 function compare(a, b) {
