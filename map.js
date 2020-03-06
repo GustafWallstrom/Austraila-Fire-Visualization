@@ -152,8 +152,8 @@ $.when(
   for (let index = 0; index < amountOfDays + predictionLength; index++) {
     // amountOfDays - predictionLength because we want to show earlier data, not only current date and forward
     if (index >= amountOfDays - predictionLength) {
-      newPredictArray[index] = 2718.97 * index + -7801.71;
-      newPredictExp[index] = 12499.42 * Math.exp(0.06 * index);
+      newPredictArray[index] = (2718.97 * index + -7801.71).toFixed(0);
+      newPredictExp[index] = (12499.42 * Math.exp(0.06 * index)).toFixed(0);
     } else {
       // remove 10 first slots in arrays because they cross x-axis
       newPredictArray.splice(0, 10);
@@ -237,7 +237,7 @@ $.when(
     options: {
       title: {
         display: true,
-        text: "Graph of confirmed cases over time."
+        text: "Graph of covid-19 over time."
       },
       scales: {
         xAxes: [
