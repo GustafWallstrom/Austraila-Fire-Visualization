@@ -92,13 +92,13 @@ $.when(
 	var deathArray = [];
 	var recoveredArray = [];
 
-	// Fill datePredictArray with strings containing all days + 5 for labelling
-	for (let index = 0; index < amountOfDays + 5; index++) {
+	// Fill datePredictArray with strings containing all days + 11 for labelling
+	for (let index = 0; index < amountOfDays + 11; index++) {
 		const tempDate = new Date(parseInt(start + index * step));
 		if (index < amountOfDays) dateArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
 		datePredictArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
 	}
-
+	log(datePredictArray);
 	// Fill chart arrays with x,y values -> (time, cases)
 	// log(dateArray.length); TOTAL amount of days in datasets
 	for (let index = 0; index < dateArray.length; index++) {
