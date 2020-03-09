@@ -120,7 +120,8 @@ $.when(
 
 	var predictArray = regression.linear(confirmedDaysArray);
 	var predictExp = regression.exponential(confirmedDaysArray);
-
+	log(predictArray);
+	log(predictExp);
 	// Fill new arrays for easier calculations
 	var newPredictArray = [];
 	var newPredictExp = [];
@@ -131,17 +132,17 @@ $.when(
 		newPredictExp[item[0]] = item[1];
 	});
 
-	var predictionLength = 5;
-	// log(amountOfDays); // -> 40 atm
+	var predictionLength = 10;
+	// log(amountOfDays);
 	for (let index = 0; index < amountOfDays + predictionLength; index++) {
 		// amountOfDays - predictionLength because we want to show earlier data, not only current date and forward
 		if (index >= amountOfDays - predictionLength) {
-			newPredictArray[index] = (2718.97 * index + -7801.71).toFixed(0);
-			newPredictExp[index] = (12499.42 * Math.exp(0.06 * index)).toFixed(0);
+			newPredictArray[index] = (2540.19 * index + -5392.65).toFixed(0);
+			newPredictExp[index] = (17945.21 * Math.exp(0.04 * index)).toFixed(0);
 		} else {
 			// remove 10 first slots in arrays because they cross x-axis
-			newPredictArray.splice(0, 10);
-			newPredictExp.splice(0, 10);
+			newPredictArray.splice(0, 5);
+			newPredictExp.splice(0, 5);
 		}
 	}
 
