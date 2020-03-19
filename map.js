@@ -12,8 +12,8 @@ var margin = {
 	width = 960 - margin.left - margin.right,
 	height = 600 - margin.top - margin.bottom;
 var startDate = '2020/01/22';
-var endDate = '2020/03/08';
-var currentDate = '3/8/20';
+var endDate = '2020/03/18';
+var currentDate = '3/18/20';
 var number = 0;
 var start = new Date(startDate).getTime();
 var end = new Date(endDate).getTime();
@@ -38,7 +38,8 @@ let myLayerOptions = {
 var map = L.map('map', {
 	center: [ 20, 60 ],
 	zoom: 2,
-	layers: [ basemap ]
+	layers: [ basemap ],
+	attributionControl: false,
 });
 var svg = d3.select(map.getPanes().overlayPane).append('svg');
 var g = svg.append('g').attr('class', 'leaflet-zoom-hide');
@@ -93,7 +94,7 @@ $.when(
 	var recoveredArray = [];
 
 	// Fill datePredictArray with strings containing all days + 11 for labelling
-	for (let index = 0; index < amountOfDays + 11; index++) {
+	for (let index = 0; index < amountOfDays + 5; index++) {
 		const tempDate = new Date(parseInt(start + index * step));
 		if (index < amountOfDays) dateArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
 		datePredictArray[index] = tempDate.getMonth() + 1 + '/' + tempDate.getDate() + '/20';
@@ -137,8 +138,8 @@ $.when(
 	for (let index = 0; index < amountOfDays + predictionLength; index++) {
 		// amountOfDays - predictionLength because we want to show earlier data, not only current date and forward
 		if (index >= amountOfDays - predictionLength) {
-			newPredictArray[index] = (2540.19 * index + -5392.65).toFixed(0);
-			newPredictExp[index] = (17945.21 * Math.exp(0.04 * index)).toFixed(0);
+			newPredictArray[index] = (3035.49 * index + -14099.26).toFixed(0);
+			newPredictExp[index] = (18286.65 * Math.exp(0.04 * index)).toFixed(0);
 		} else {
 			// remove 10 first slots in arrays because they cross x-axis
 			newPredictArray.splice(0, 5);
@@ -356,7 +357,7 @@ function moveMap(e) {
  * What happens when we use the date slider
  */
 
-d3.select('#date-value').text('Sunday, 8/3/2020');
+d3.select('#date-value').text('Sunday, 18/3/2020');
 d3.select('#dateSlider').on('input', function() {
 	var data = new Date(parseInt(this.value));
 	var weekday = new Array(7);
@@ -372,12 +373,6 @@ d3.select('#dateSlider').on('input', function() {
 	var date = data.getDate();
 	var month = data.getMonth() + 1;
 	d3.select('#date-value').text(day + ', ' + date + '/' + month + '/' + data.getFullYear());
-	// Because of leading zero before march's days (from dataset)
-	// if (month == 3 && date < 10) {
-	// 	currentDate = month + '/0' + date + '/20';
-	// } else {
-	// 	currentDate = month + '/' + date + '/20';
-	// }
 	currentDate = month + '/' + date + '/20';
 	// Draw new circles
 	$.getJSON('data/' + state + '.geojson', (data) => {
@@ -438,7 +433,7 @@ function createLayerStyle(customRadius) {
 		}
 		return {
 			color: circleColor,
-			radius: 2 * Math.log(customRadius * 2 + 5),
+			radius: Math.log(customRadius * 2 + 5),
 			stroke: false,
 			fillOpacity: 1
 		};

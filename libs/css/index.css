@@ -73,6 +73,7 @@ g {
 #deathsCaseContainer,
 #recoveredCaseContainer {
 	overflow-y: auto;
+	overflow-x: hidden;
 	margin-bottom: 30px;
 	border-style: groove;
 	border-color: lightgrey;
